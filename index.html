@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laboratorio Geométrico - Polígonos y Teorema de Pitágoras</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { primary: '#2563eb', secondary: '#16a34a', dark: '#1e293b' }
+                }
+            }
+        }
+    </script>
+
+    <!-- KaTeX para renderizado de fórmulas -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js" crossorigin="anonymous"></script>
+    <!-- Extensión Auto-render de KaTeX -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+
+    <!-- Math.js para evaluación matemática -->
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.min.js" crossorigin="anonymous"></script>
+
+    <!-- MathLive para cajas de entrada matemáticas interactivas -->
+    <script defer src="https://unpkg.com/mathlive" crossorigin="anonymous"></script>
+
+    <style>
+        /* --- ESTILOS GENERALES --- */
+        body { font-family: 'Inter', system-ui, sans-serif; background-color: #f8fafc; }
+        
+        .tab-content { display: none; animation: fadeIn 0.3s ease-in-out; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- ESTILOS MATHLIVE --- */
+        math-field {
+            font-size: 1.15rem; padding: 0.5rem; border-radius: 0.5rem;
+            border: 1px solid #cbd5e1; background-color: #ffffff; width: 100%;
+            transition: all 0.2s;
+        }
+        math-field:focus-within { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2); }
+
+        /* --- ESTILOS SVG --- */
+        svg text { user-select: none; font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="text-slate-800 min-h-screen flex flex-col">
+
+    <!-- ========================================================= -->
+    <!-- ENCABEZADO Y NAVEGACIÓN -->
+    <!-- ========================================================= -->
+    <header class="bg-dark text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center">
+            <h1 class="text-2xl font-bold mb-4 md:mb-0">Laboratorio Geométrico: Polígonos y Teorema de Pitágoras</h1>
+            <nav class="flex space-x-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0">
+                <button onclick="openTab('tab-teoria')" id="btn-tab-teoria" class="tab-btn px-4 py-2 rounded-md font-semibold text-slate-300">1. Teoría</button>
+                <button onclick="openTab('tab-regulares')" id="btn-tab-regulares" class="tab-btn px-4 py-2 rounded-md font-semibold hover:bg-slate-700 text-slate-300">2. Pol. Regulares</button>
+                <button onclick="openTab('tab-irregulares')" id="btn-tab-irregulares" class="tab-btn px-4 py-2 rounded-md font-semibold hover:bg-slate-700 text-slate-300">3. Pol. Irregulares</button>
+                <button onclick="openTab('tab-pitagoras')" id="btn-tab-pitagoras" class="tab-btn px-4 py-2 rounded-md font-semibold hover:bg-slate-700 bg-primary text-white">4. Pitágoras</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl mx-auto px-4 py-8 w-full">
+
+        <!-- ========================================================= -->
+        <!-- PESTAÑA 1: TEORÍA -->
+        <!-- ========================================================= -->
+        <section id="tab-teoria" class="tab-content">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-8 math-render-area">
+                <h2 class="text-3xl font-bold text-primary mb-6 border-b pb-4">Fundamentación Teórica</h2>
+                
+                <div class="p-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg mb-8">
+                    <p class="text-sm text-blue-900">
+                        <strong>Nota Importante:</strong> Para ingresar fracciones, raíces o exponentes en las secciones prácticas, <strong>utilice el teclado virtual</strong> de la bandeja de entrada matemática que aparece al hacer clic sobre ella.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Teoría: Polígonos -->
+                    <div>
+                        <h3 class="text-xl font-bold text-dark mb-4">1. Polígonos</h3>
+                        <div class="mb-4 text-slate-700 text-sm space-y-3">
+                            <p><strong>Definición:</strong> Un polígono es una figura plana cerrada, formada por una sucesión de segmentos de recta (lados) que se unen únicamente en sus extremos y no se cruzan entre sí.</p>
+                            
+                            <p><strong>Elementos principales:</strong></p>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li><strong>Lados:</strong> Los segmentos de recta que forman el contorno de la figura.</li>
+                                <li><strong>Vértices:</strong> Puntos donde se intersecan dos lados consecutivos.</li>
+                                <li><strong>Ángulos internos:</strong> Ángulos formados por dos lados consecutivos en el interior.</li>
+                                <li><strong>Ángulos externos:</strong> Ángulos formados por un lado y la prolongación del lado adyacente.</li>
+                                <li><strong>Diagonales:</strong> Segmentos que unen dos vértices no consecutivos.</li>
+                                <li><strong>Radio (\(r\)):</strong> Distancia desde el centro geométrico hasta uno de sus vértices.</li>
+                                <li><strong>Apotema (\(a\)):</strong> Distancia perpendicular desde el centro hasta el punto medio de cualquier lado.</li>
+                            </ul>
+
+                            <p><strong>Clasificación:</strong></p>
+                            <ul class="list-disc pl-5 space-y-1">
+                                <li><strong>Según el número de lados:</strong> Triángulo (3), Cuadrilátero (4), Pentágono (5), Hexágono (6), etc.</li>
+                                <li><strong>Regulares:</strong> Tienen todos sus lados de igual longitud y todos sus ángulos internos congruentes (misma medida).</li>
+                                <li><strong>Irregulares:</strong> No cumplen con tener lados o ángulos iguales. Se dividen en regiones básicas para calcular su área.</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm space-y-3">
+                            <h4 class="font-bold text-slate-800 mb-2">Fórmulas para Polígonos Regulares:</h4>
+                            <p><strong>Suma de ángulos internos (\(S\)):</strong> $$S = (n - 2)(180^\circ)$$</p>
+                            <p><strong>Ángulo interno (\(\alpha\)):</strong> $$\alpha = \frac{S}{n}$$</p>
+                            <p><strong>Ángulo externo y central (\(\beta, \theta\)):</strong> $$\beta = \frac{360^\circ}{n}$$</p>
+                            <p><strong>Perímetro (\(P\)):</strong> $$P = (n)(L)$$</p>
+                            <p><strong>Área (\(A\)):</strong> $$A = \frac{(P)(a)}{2}$$</p>
+                        </div>
+                    </div>
+
+                    <!-- Teoría: Pitágoras -->
+                    <div>
+                        <h3 class="text-xl font-bold text-dark mb-4">2. Teorema de Pitágoras</h3>
+                        <p class="mb-4 text-slate-600 text-sm">
+                            Establece que en todo <strong>triángulo rectángulo</strong> (aquel que tiene un ángulo recto de \(90^\circ\)), el cuadrado de la longitud de la hipotenusa (el lado de mayor longitud, representado por \(c\)) es igual a la suma de los cuadrados de las longitudes de los catetos (los dos lados que forman el ángulo recto, representados por \(a\) y \(b\)).
+                        </p>
+                        <div class="bg-emerald-50 p-4 rounded-lg border border-emerald-200 text-sm space-y-3">
+                            <p class="text-center font-bold text-lg text-emerald-800">
+                                $$(c)^2 = (a)^2 + (b)^2$$
+                            </p>
+                            <p><strong>Fórmula para la Hipotenusa (\(c\)):</strong> 
+                                $$c = \sqrt{(a)^2 + (b)^2}$$
+                            </p>
+                            <p><strong>Fórmula para el Cateto \(a\):</strong> 
+                                $$a = \sqrt{(c)^2 - (b)^2}$$
+                            </p>
+                            <p><strong>Fórmula para el Cateto \(b\):</strong> 
+                                $$b = \sqrt{(c)^2 - (a)^2}$$
+                            </p>
+                        </div>
+                        <p class="mt-4 text-slate-600 text-sm">
+                            Además del Teorema de Pitágoras, en todo triángulo rectángulo, los dos ángulos agudos (\(\alpha\) y \(\beta\)) son complementarios. Esto significa que si conoces uno de ellos, el otro se calcula restando ese valor a \(90^\circ\).<br><br>
+                            <strong>Ángulos complementarios:</strong><br>
+                            \(\alpha + \beta = 90^\circ\)  &rarr;  \(\alpha = 90^\circ - \beta\) y \(\beta = 90^\circ - \alpha\)
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- PESTAÑA 2: POLÍGONOS REGULARES -->
+        <!-- ========================================================= -->
+        <section id="tab-regulares" class="tab-content">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Controles -->
+                <div class="lg:col-span-4 bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                    <h2 class="text-xl font-bold text-primary mb-4">Parámetros</h2>
+                    <p class="text-xs text-slate-500 mb-4">Ingresa el número de lados (\(n\)) y un valor adicional. El sistema calculará el resto con trigonometría y Pitágoras.</p>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-bold text-slate-700">Lados (\(n\))</label>
+                            <input type="number" id="reg-n" value="5" min="3" class="w-full p-2 border rounded-md outline-none focus:border-primary">
+                        </div>
+                        <div><label class="block text-sm font-bold text-slate-700">Lado (\(L\)) [\(\text{u}\)]</label><math-field id="reg-L" contenteditable="true" tabindex="0">10</math-field></div>
+                        <div><label class="block text-sm font-bold text-slate-700">Radio (\(r\)) [\(\text{u}\)]</label><math-field id="reg-r" contenteditable="true" tabindex="0"></math-field></div>
+                        <div><label class="block text-sm font-bold text-slate-700">Apotema (\(a\)) [\(\text{u}\)]</label><math-field id="reg-a" contenteditable="true" tabindex="0"></math-field></div>
+                        <div><label class="block text-sm font-bold text-slate-700">Perímetro (\(P\)) [\(\text{u}\)]</label><math-field id="reg-P" contenteditable="true" tabindex="0"></math-field></div>
+                        <div><label class="block text-sm font-bold text-slate-700">Área (\(A\)) [\(\text{u}^2\)]</label><math-field id="reg-A" contenteditable="true" tabindex="0"></math-field></div>
+                    </div>
+                </div>
+
+                <!-- Visualización y Procedimiento -->
+                <div class="lg:col-span-8 flex flex-col gap-6">
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 flex justify-center items-center h-[300px]">
+                        <svg id="svg-regular" class="w-full h-full" viewBox="-200 -200 400 400">
+                            <!-- El gráfico se inyecta dinámicamente aquí -->
+                        </svg>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex-grow">
+                        <h3 class="text-xl font-bold text-dark mb-4">Procedimiento</h3>
+                        <div id="reg-procedure" class="space-y-3 text-sm text-slate-700 math-render-area">
+                            <!-- Los pasos se inyectan dinámicamente aquí -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- PESTAÑA 3: POLÍGONOS IRREGULARES -->
+        <!-- ========================================================= -->
+        <section id="tab-irregulares" class="tab-content">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Controles -->
+                <div class="lg:col-span-4 bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                    <h2 class="text-xl font-bold text-primary mb-4">Figuras Compuestas</h2>
+                    <p class="text-sm text-slate-600 mb-6">
+                        Genera diferentes polígonos irregulares compuestos por rectángulos, cuadrados, trapecios y triángulos. 
+                        Aprende a analizar regiones y aplicar el <strong>Teorema de Pitágoras</strong> para descubrir alturas o bases desconocidas y calcular el área.
+                    </p>
+                    <button onclick="generateIrregular()" class="w-full bg-secondary hover:bg-green-700 text-white font-bold py-3 rounded-lg shadow-sm transition">
+                        Generar Nueva Figura
+                    </button>
+                </div>
+
+                <!-- Visualización y Procedimiento -->
+                <div class="lg:col-span-8 flex flex-col gap-6">
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 flex justify-center items-center h-[350px]">
+                        <svg id="svg-irregular" class="w-full h-full" viewBox="0 0 400 300">
+                             <!-- El polígono irregular se dibuja aquí -->
+                        </svg>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex-grow">
+                        <h3 class="text-xl font-bold text-dark mb-4">Análisis de Regiones</h3>
+                        <div id="irreg-procedure" class="space-y-4 text-sm text-slate-700 math-render-area">
+                            <!-- El cálculo de las regiones se inyecta aquí -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- PESTAÑA 4: TEOREMA DE PITÁGORAS -->
+        <!-- ========================================================= -->
+        <section id="tab-pitagoras" class="tab-content active">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Controles -->
+                <div class="lg:col-span-4 bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                    <h2 class="text-xl font-bold text-primary mb-4">Explorador Dinámico</h2>
+                    <p class="text-xs text-slate-600 mb-4 border-b pb-4">
+                        Ingresa datos en <strong>dos casillas cualesquiera</strong> (ej: dos catetos, o un cateto y un ángulo). El sistema calculará el resto automáticamente utilizando Pitágoras y el complemento de $90^\circ$.
+                    </p>
+                    <div class="space-y-4">
+                        <div><label class="block text-sm font-bold text-slate-700">Cateto \(a\) [\(\text{u}\)]</label><math-field id="pit-a" contenteditable="true" tabindex="0">3</math-field></div>
+                        <div><label class="block text-sm font-bold text-slate-700">Cateto \(b\) [\(\text{u}\)]</label><math-field id="pit-b" contenteditable="true" tabindex="0">4</math-field></div>
+                        <div><label class="block text-sm font-bold text-slate-700">Hipotenusa \(c\) [\(\text{u}\)]</label><math-field id="pit-c" contenteditable="true" tabindex="0"></math-field></div>
+                        <div><label class="block text-sm font-bold text-slate-700">Ángulo \(\alpha\) (opuesto a \(a\)) [\(^\circ\)]</label><math-field id="pit-alpha" contenteditable="true" tabindex="0"></math-field></div>
+                        <div><label class="block text-sm font-bold text-slate-700">Ángulo \(\beta\) (opuesto a \(b\)) [\(^\circ\)]</label><math-field id="pit-beta" contenteditable="true" tabindex="0"></math-field></div>
+                        <div id="pit-error" class="text-red-600 text-sm font-bold p-3 bg-red-50 rounded border border-red-200 hidden">Error: Revisa los valores ingresados.</div>
+                    </div>
+                </div>
+
+                <!-- Visualización y Procedimiento -->
+                <div class="lg:col-span-8 flex flex-col gap-6">
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 flex justify-center items-center h-[300px]">
+                        <svg id="svg-pitagoras" class="w-full h-full" viewBox="-50 -50 450 350">
+                            <!-- El triángulo se inyecta dinámicamente aquí -->
+                        </svg>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex-grow">
+                        <h3 class="text-xl font-bold text-dark mb-4">Resolución Paso a Paso</h3>
+                        <div id="pit-procedure" class="space-y-3 text-sm text-slate-700 math-render-area">
+                             <!-- El procedimiento paso a paso va aquí -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ========================================================= -->
+    <!-- SCRIPT PRINCIPAL -->
+    <!-- ========================================================= -->
+    <script>
+        // --- 1. UTILIDADES Y CONFIGURACIÓN ---
+        
+        // Función para disparar KaTeX en contenedores dinámicos
+        function renderDynamicMath(containerId) {
+            const container = document.getElementById(containerId);
+            if(container && window.renderMathInElement) {
+                renderMathInElement(container, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '\\[', right: '\\]', display: true},
+                        {left: '$', right: '$', display: false}, // <--- SOLUCIÓN: Agregado delimitador de dolar simple
+                        {left: '\\(', right: '\\)', display: false}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        // Leer valor seguro de MathLive usando Math.js
+        function getSafeMFValue(id) {
+            const el = document.getElementById(id);
+            if(!el) return null;
+            let expr = el.getValue('ascii-math').replace(/cdot/g, '*').replace(/times/g, '*');
+            if(!expr || expr.trim() === '') return null;
+            try {
+                const val = math.evaluate(expr);
+                return (typeof val === 'number' && !isNaN(val)) ? val : null;
+            } catch(e) { return null; }
+        }
+
+        // Formateador
+        function fmt(num, dec = 2) { return Number(Math.round(num + 'e' + dec) + 'e-' + dec); }
+
+        // Navegación de pestañas
+        function openTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => {
+                el.classList.remove('bg-primary', 'text-white'); el.classList.add('text-slate-300');
+            });
+            document.getElementById(tabId).classList.add('active');
+            document.getElementById('btn-' + tabId).classList.remove('text-slate-300');
+            document.getElementById('btn-' + tabId).classList.add('bg-primary', 'text-white');
+
+            if(tabId === 'tab-regulares') updateRegular();
+            if(tabId === 'tab-irregulares' && !irregGenerated) generateIrregular();
+            if(tabId === 'tab-pitagoras') updatePitagoras();
+        }
+
+        // --- 2. PESTAÑA 2: POLÍGONOS REGULARES ---
+        let regLast = 'L';
+        let regUpdating = false;
+
+        function setupRegulares() {
+            document.getElementById('reg-n').addEventListener('input', updateRegular);
+            ['L', 'r', 'a', 'P', 'A'].forEach(id => {
+                const el = document.getElementById('reg-' + id);
+                if(el) el.addEventListener('input', () => {
+                    if(regUpdating) return;
+                    if(getSafeMFValue('reg-' + id) > 0) { regLast = id; updateRegular(); }
+                });
+            });
+        }
+
+        function updateRegular() {
+            regUpdating = true;
+            const n = parseInt(document.getElementById('reg-n').value);
+            if(n < 3) { regUpdating = false; return; }
+
+            const val = getSafeMFValue('reg-' + regLast);
+            if(!val || val <= 0) { regUpdating = false; return; }
+
+            const gamma = Math.PI / n;
+            const sinG = Math.sin(gamma), cosG = Math.cos(gamma), tanG = Math.tan(gamma);
+            let L, r, a;
+
+            switch(regLast) {
+                case 'L': L = val; r = L / (2 * sinG); a = L / (2 * tanG); break;
+                case 'r': r = val; L = 2 * r * sinG; a = r * cosG; break;
+                case 'a': a = val; L = 2 * a * tanG; r = a / cosG; break;
+                case 'P': L = val / n; r = L / (2 * sinG); a = L / (2 * tanG); break;
+                case 'A': a = Math.sqrt(val / (n * tanG)); L = 2 * a * tanG; r = a / cosG; break;
+            }
+
+            let P = n * L; let A = (P * a) / 2;
+            let sumAlpha = (n - 2) * 180; let alpha = sumAlpha / n; let beta = 360 / n;
+
+            const setVal = (id, v) => { if(regLast !== id) document.getElementById('reg-'+id).value = fmt(v).toString(); }
+            setVal('L', L); setVal('r', r); setVal('a', a); setVal('P', P); setVal('A', A);
+
+            drawRegSVG(n, r, a);
+            buildRegProcedure(n, L, r, a, P, A, sumAlpha, alpha, beta, regLast);
+            regUpdating = false;
+        }
+
+        function drawRegSVG(n, r, a) {
+            const svg = document.getElementById('svg-regular');
+            let pts = [];
+            for(let i=0; i<n; i++) {
+                const ang = i * (2*Math.PI)/n - Math.PI/2;
+                pts.push({x: 150 * Math.cos(ang), y: 150 * Math.sin(ang)});
+            }
+            let ptsStr = pts.map(p => `${p.x},${p.y}`).join(' ');
+
+            let mx = (pts[0].x + pts[1].x) / 2;
+            let my = (pts[0].y + pts[1].y) / 2;
+            
+            svg.innerHTML = `
+                <!-- Círculos guía -->
+                <circle cx="0" cy="0" r="150" fill="none" stroke="#cbd5e1" stroke-width="1.5" />
+                <circle cx="0" cy="0" r="${(a/r)*150}" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5,5" />
+                <!-- Polígono -->
+                <polygon points="${ptsStr}" fill="#dbeafe" stroke="#2563eb" stroke-width="2" stroke-linejoin="round"/>
+                
+                <!-- Centro -->
+                <circle cx="0" cy="0" r="3" fill="#334155" />
+
+                <!-- Etiqueta Radio -->
+                <line x1="0" y1="0" x2="${pts[0].x}" y2="${pts[0].y}" stroke="#16a34a" stroke-width="2" stroke-dasharray="4,2" />
+                <text x="${pts[0].x/2 + 15}" y="${pts[0].y/2}" fill="#16a34a" font-weight="bold" text-anchor="middle" font-size="14">r</text>
+                
+                <!-- Etiqueta Apotema -->
+                <line x1="0" y1="0" x2="${mx}" y2="${my}" stroke="#dc2626" stroke-width="2" stroke-dasharray="4,2" />
+                <text x="${mx/2 - 15}" y="${my/2}" fill="#dc2626" font-weight="bold" text-anchor="middle" font-size="14">a</text>
+                
+                <!-- Etiqueta Lado -->
+                <text x="${mx * 1.15}" y="${my * 1.15 + 5}" fill="#2563eb" font-weight="bold" text-anchor="middle" font-size="14">Lado</text>
+            `;
+        }
+
+        function buildRegProcedure(n, L, r, a, P, A, S, alpha, beta, source) {
+            let html = '';
+            // Explicación de Pitágoras para apotema/radio
+            if(source === 'L' || source === 'r') {
+                html += `<div class="p-3 bg-slate-50 border border-slate-200 rounded mb-2"><strong>1. Apotema mediante Pitágoras:</strong> Para hallar la apotema formamos un triángulo rectángulo con la hipotenusa (radio $r$) y un cateto (mitad del lado $\\frac{L}{2}$).<br>
+                $$ a = \\sqrt{(r)^2 - \\left(\\frac{L}{2}\\right)^2} = \\sqrt{(${fmt(r)})^2 - \\left(\\frac{${fmt(L)}}{2}\\right)^2} = ${fmt(a)}\\text{ u} $$</div>`;
+            } else if (source === 'a') {
+                html += `<div class="p-3 bg-slate-50 border border-slate-200 rounded mb-2"><strong>1. Radio mediante Pitágoras:</strong> Para hallar el radio formamos un triángulo rectángulo con los catetos: la apotema ($a$) y la mitad del lado ($\\frac{L}{2}$).<br>
+                $$ r = \\sqrt{(a)^2 + \\left(\\frac{L}{2}\\right)^2} = \\sqrt{(${fmt(a)})^2 + \\left(\\frac{${fmt(L)}}{2}\\right)^2} = ${fmt(r)}\\text{ u} $$</div>`;
+            }
+            html += `<div class="p-3 bg-white border rounded mb-2"><strong>2. Suma Ángulos ($S$):</strong> $$ S = (${n} - 2)(180^\\circ) = ${fmt(S)}^\\circ $$</div>`;
+            html += `<div class="p-3 bg-white border rounded mb-2"><strong>3. Ángulo Interno ($\\alpha$):</strong> $$ \\alpha = \\frac{S}{n} = \\frac{${fmt(S)}^\\circ}{${n}} = ${fmt(alpha)}^\\circ $$</div>`;
+            html += `<div class="p-3 bg-white border rounded mb-2"><strong>4. Perímetro ($P$):</strong> $$ P = (${n})(${fmt(L)}) = ${fmt(P)}\\text{ u} $$</div>`;
+            html += `<div class="p-3 bg-white border rounded mb-2"><strong>5. Área ($A$):</strong> $$ A = \\frac{(${fmt(P)})(${fmt(a)})}{2} = ${fmt(A)}\\text{ u}^2 $$</div>`;
+            
+            document.getElementById('reg-procedure').innerHTML = html;
+            renderDynamicMath('reg-procedure');
+        }
+
+        // --- 3. PESTAÑA 3: POLÍGONOS IRREGULARES ---
+        let irregGenerated = false;
+
+        function generateIrregular() {
+            irregGenerated = true;
+            const types = ['l_shape', 'trapezoid', 'pentagon_house'];
+            const type = types[Math.floor(Math.random() * types.length)];
+            let pts=[], lines=[], texts=[], html='';
+
+            if (type === 'l_shape') {
+                let w1=5, h1=6, w2=7, h2=4; // L shape dimensions
+                pts = [{x:0,y:0}, {x:w1,y:0}, {x:w1,y:h1}, {x:w1+w2,y:h1}, {x:w1+w2,y:h1+h2}, {x:0,y:h1+h2}];
+                lines = [{x1:w1, y1:h1, x2:w1, y2:h1+h2}]; // Division line
+                
+                texts.push({x:w1/2, y:-0.5, t:w1}); texts.push({x:w1+w2/2, y:h1-0.5, t:w2});
+                texts.push({x:-0.5, y:(h1+h2)/2, t:h1+h2}); texts.push({x:w1+w2+0.5, y:h1+h2/2, t:h2});
+                texts.push({x:w1+0.5, y:h1/2, t:h1}); texts.push({x:(w1+w2)/2, y:h1+h2+0.5, t:w1+w2});
+                
+                let A1 = w1*(h1+h2), A2 = w2*h2;
+                html += `<div class="p-3 bg-white border rounded mb-2"><strong>1. Figura en "L" (Hexágono Irregular):</strong> Se divide en dos rectángulos mediante una línea imaginaria vertical u horizontal. Al tener ángulos rectos, sus lados opuestos son iguales y no se necesita el Teorema de Pitágoras.</div>`;
+                html += `<div class="p-3 bg-white border rounded mb-2"><strong>2. Área Rectángulo 1 (Izquierdo):</strong> Base = ${w1}, Altura = ${h1+h2}.<br> $$ A_1 = (${w1})(${h1+h2}) = ${A1}\\text{ u}^2 $$</div>`;
+                html += `<div class="p-3 bg-white border rounded mb-2"><strong>3. Área Rectángulo 2 (Derecho):</strong> Base = ${w2}, Altura = ${h2}.<br> $$ A_2 = (${w2})(${h2}) = ${A2}\\text{ u}^2 $$</div>`;
+                html += `<div class="p-3 bg-green-50 border rounded border-green-300"><strong>Área Total:</strong> $$ A = A_1 + A_2 = ${A1} + ${A2} = ${A1+A2}\\text{ u}^2 $$</div>`;
+
+            } else if (type === 'trapezoid') {
+                let base_rect=6, base_tri=4, h=3, slant=5; // 3-4-5 triangle
+                let base_tot = base_rect + base_tri;
+                pts = [{x:0,y:0}, {x:base_rect,y:0}, {x:base_tot,y:h}, {x:0,y:h}];
+                lines = [{x1:base_rect, y1:0, x2:base_rect, y2:h}];
+                
+                texts.push({x:base_rect/2, y:-0.5, t:base_rect}); texts.push({x:base_tot/2, y:h+0.5, t:base_tot});
+                texts.push({x:-0.5, y:h/2, t:h}); texts.push({x:base_rect+base_tri/2+0.5, y:h/2-0.5, t:slant});
+                
+                let A1 = base_rect*h, A2 = (base_tri*h)/2;
+                html += `<div class="p-3 bg-white border rounded mb-2"><strong>1. Descomposición de un Cuadrilátero Irregular:</strong> Al trazar una línea vertical interna, la figura se divide en un rectángulo (izquierdo) y un triángulo rectángulo (derecho).</div>`;
+                html += `<div class="p-3 bg-slate-50 border border-slate-200 rounded mb-2"><strong>2. Identificando la base del triángulo:</strong> La base completa inferior mide ${base_tot} y la parte del rectángulo mide ${base_rect}. La base del triángulo será: ${base_tot} - ${base_rect} = ${base_tri} u.</div>`;
+                html += `<div class="p-3 bg-blue-50 border border-blue-200 rounded mb-2"><strong>3. Aplicando Pitágoras (Altura del Triángulo):</strong> Conocemos la hipotenusa (${slant}) y la base (${base_tri}). Hallamos la altura (cateto):<br> $$ h = \\sqrt{(${slant})^2 - (${base_tri})^2} = \\sqrt{25 - 16} = ${h}\\text{ u} $$</div>`;
+                html += `<div class="p-3 bg-white border rounded mb-2"><strong>4. Área del Rectángulo:</strong> $$ A_1 = (${base_rect})(${h}) = ${A1}\\text{ u}^2 $$</div>`;
+                html += `<div class="p-3 bg-white border rounded mb-2"><strong>5. Área del Triángulo:</strong> $$ A_2 = \\frac{(${base_tri})(${h})}{2} = ${A2}\\text{ u}^2 $$</div>`;
+                html += `<div class="p-3 bg-green-50 border rounded border-green-300"><strong>Área Total:</strong> $$ A = ${A1} + ${A2} = ${A1+A2}\\text{ u}^2 $$</div>`;
+
+            } else if (type === 'pentagon_house') {
+                let base=8, wall=5, slant=5, h_tri=3; // 3-4-5 triangle (half base = 4)
+                pts = [{x:0,y:h_tri}, {x:base/2,y:0}, {x:base,y:h_tri}, {x:base,y:h_tri+wall}, {x:0,y:h_tri+wall}];
+                lines = [{x1:0, y1:h_tri, x2:base, y2:h_tri}];
+                
+                texts.push({x:base/2, y:h_tri+wall+0.5, t:base}); texts.push({x:-0.5, y:h_tri+wall/2, t:wall});
+                texts.push({x:base+0.5, y:h_tri+wall/2, t:wall}); 
+                texts.push({x:base/4-0.5, y:h_tri/2-0.5, t:slant}); texts.push({x:3*base/4+0.5, y:h_tri/2-0.5, t:slant});
+
+                let A1 = base*wall, A2 = (base*h_tri)/2;
+                html += `<div class="p-3 bg-white border rounded mb-2"><strong>1. Descomposición (Forma de Iglesia/Cabaña):</strong> Es un pentágono irregular compuesto por un rectángulo base y un triángulo isósceles que forma el techo.</div>`;
+                html += `<div class="p-3 bg-slate-50 border border-slate-200 rounded mb-2"><strong>2. Identificando la base del triángulo rectángulo:</strong> Trazamos la altura que parte el triángulo isósceles por la mitad. La base total es ${base}, así que la mitad es: ${base}/2 = ${base/2} u.</div>`;
+                html += `<div class="p-3 bg-blue-50 border border-blue-200 rounded mb-2"><strong>3. Aplicando Pitágoras (Altura del Techo):</strong> Conocemos la hipotenusa (caída del techo = ${slant}) y la media base (${base/2}). Hallamos la altura (cateto):<br> $$ h = \\sqrt{(${slant})^2 - (${base/2})^2} = ${h_tri}\\text{ u} $$</div>`;
+                html += `<div class="p-3 bg-white border rounded mb-2"><strong>4. Área del Rectángulo:</strong> $$ A_1 = (${base})(${wall}) = ${A1}\\text{ u}^2 $$</div>`;
+                html += `<div class="p-3 bg-white border rounded mb-2"><strong>5. Área del Triángulo Completo:</strong> $$ A_2 = \\frac{(${base})(${h_tri})}{2} = ${A2}\\text{ u}^2 $$</div>`;
+                html += `<div class="p-3 bg-green-50 border rounded border-green-300"><strong>Área Total:</strong> $$ A = ${A1} + ${A2} = ${A1+A2}\\text{ u}^2 $$</div>`;
+            }
+
+            drawIrregSVG(pts, lines, texts);
+            document.getElementById('irreg-procedure').innerHTML = html;
+            renderDynamicMath('irreg-procedure');
+        }
+
+        function drawIrregSVG(pts, lines, texts) {
+            const svg = document.getElementById('svg-irregular');
+            let minX = Math.min(...pts.map(p=>p.x)), maxX = Math.max(...pts.map(p=>p.x));
+            let minY = Math.min(...pts.map(p=>p.y)), maxY = Math.max(...pts.map(p=>p.y));
+            let scale = Math.min(300/(maxX-minX || 1), 200/(maxY-minY || 1)) * 0.8;
+            let ox = (400 - (maxX-minX)*scale)/2 - minX*scale, oy = (300 - (maxY-minY)*scale)/2 - minY*scale;
+            const tx = p => p.x * scale + ox, ty = p => p.y * scale + oy;
+
+            let poly = `<polygon points="${pts.map(p=>`${tx(p)},${ty(p)}`).join(' ')}" fill="#dcfce7" stroke="#16a34a" stroke-width="3"/>`;
+            let htmlLines = lines.map(l => `<line x1="${tx({x:l.x1, y:l.y1})}" y1="${ty({x:l.x1, y:l.y1})}" x2="${tx({x:l.x2, y:l.y2})}" y2="${ty({x:l.x2, y:l.y2})}" stroke="#16a34a" stroke-width="2" stroke-dasharray="5,5"/>`).join('');
+            let htmlTexts = texts.map(t => `<text x="${tx({x:t.x,y:t.y})}" y="${ty({x:t.x,y:t.y})}" fill="#334155" font-weight="bold" text-anchor="middle">${t.t} u</text>`).join('');
+            svg.innerHTML = poly + htmlLines + htmlTexts;
+        }
+
+        // --- 4. PESTAÑA 4: TEOREMA DE PITÁGORAS ---
+        let pitActivos = ['a', 'b']; 
+
+        function setupPitagoras() {
+            // Configurar los primeros dos campos como valores iniciales por defecto (Cateto a y b)
+            ['a','b','c','alpha','beta'].forEach(id => {
+                document.getElementById('pit-' + id).addEventListener('input', () => {
+                    // Mantiene el tracking de las últimas dos cajas editadas
+                    if(pitActivos[1] !== id) {
+                        if(pitActivos[0] !== id) { pitActivos.shift(); pitActivos.push(id); } 
+                        else { pitActivos = [pitActivos[1], pitActivos[0]]; }
+                    }
+                    updatePitagoras();
+                });
+            });
+            updatePitagoras();
+        }
+
+        function updatePitagoras() {
+            const err = document.getElementById('pit-error'); err.classList.add('hidden');
+            let vals = {};
+            pitActivos.forEach(id => vals[id] = getSafeMFValue('pit-' + id));
+            let a = vals['a'], b = vals['b'], c = vals['c'], alpha = vals['alpha'], beta = vals['beta'];
+
+            try {
+                // Bloque para cálculo cuando los ángulos son parte del input
+                if(pitActivos.includes('alpha') || pitActivos.includes('beta')) {
+                    if(pitActivos.includes('alpha') && alpha > 0 && alpha < 90) beta = 90 - alpha;
+                    if(pitActivos.includes('beta') && beta > 0 && beta < 90) alpha = 90 - beta;
+                }
+
+                // Cálculo de lados y ángulos usando trigonometría tras bambalinas para llenar cajas,
+                // PERO el procedimiento visual mostrará Pitágoras y resta de 90 grados a nivel 8vo grado.
+                if('a' in vals && 'b' in vals) { c = Math.sqrt(a*a + b*b); alpha = Math.atan(a/b)*(180/Math.PI); beta = 90-alpha; }
+                else if('a' in vals && 'c' in vals) { if(a>=c) throw "La hipotenusa debe ser mayor al cateto."; b = Math.sqrt(c*c - a*a); alpha = Math.asin(a/c)*(180/Math.PI); beta = 90-alpha; }
+                else if('b' in vals && 'c' in vals) { if(b>=c) throw "La hipotenusa debe ser mayor al cateto."; a = Math.sqrt(c*c - b*b); alpha = Math.acos(b/c)*(180/Math.PI); beta = 90-alpha; }
+                else if(('a' in vals || 'b' in vals || 'c' in vals) && (alpha || beta)) {
+                    let rad = alpha * Math.PI/180;
+                    if('a' in vals) { c = a/Math.sin(rad); b = a/Math.tan(rad); }
+                    else if('b' in vals) { c = b/Math.cos(rad); a = b*Math.tan(rad); }
+                    else if('c' in vals) { a = c*Math.sin(rad); b = c*Math.cos(rad); }
+                } else return;
+
+                // Actualizar las cajas de texto que NO están siendo editadas
+                const res = {a,b,c,alpha,beta};
+                ['a','b','c','alpha','beta'].forEach(id => {
+                    const el = document.getElementById('pit-'+id);
+                    if(pitActivos.includes(id)) { 
+                        el.style.borderColor = '#2563eb'; el.style.backgroundColor = '#eff6ff'; 
+                    } else { 
+                        el.style.borderColor = 'transparent'; el.style.backgroundColor = '#ffffff'; 
+                        if(res[id]) el.value = fmt(res[id]).toString(); 
+                    }
+                });
+
+                drawPitSVG(a, b, c, alpha, beta);
+                buildPitProcedure(pitActivos, a, b, c, alpha, beta);
+
+            } catch(e) { err.innerText = e; err.classList.remove('hidden'); }
+        }
+
+        function drawPitSVG(a,b,c,alpha,beta) {
+            const svg = document.getElementById('svg-pitagoras');
+            const scale = 180 / Math.max(a, b);
+            const pxA = a*scale, pxB = b*scale, ox = 100, oy = 250;
+            
+            svg.innerHTML = `
+                <polygon points="${ox},${oy} ${ox+pxA},${oy} ${ox},${oy-pxB}" fill="#e0f2fe" stroke="#0ea5e9" stroke-width="3"/>
+                <!-- Marcador de ángulo recto -->
+                <polyline points="${ox},${oy-15} ${ox+15},${oy-15} ${ox+15},${oy}" fill="none" stroke="#0ea5e9" stroke-width="2"/>
+                
+                <text x="${ox+pxA/2}" y="${oy+20}" fill="#0369a1" font-weight="bold" text-anchor="middle">a=${fmt(a)}</text>
+                <text x="${ox-10}" y="${oy-pxB/2}" fill="#0369a1" font-weight="bold" text-anchor="end">b=${fmt(b)}</text>
+                <text x="${ox+pxA/2+10}" y="${oy-pxB/2-10}" fill="#c2410c" font-weight="bold">c=${fmt(c)}</text>
+                <text x="${ox+pxA-40}" y="${oy-10}" fill="#b45309" font-weight="bold">\u03B1=${fmt(alpha)}°</text>
+                <text x="${ox+10}" y="${oy-pxB+35}" fill="#6d28d9" font-weight="bold">\u03B2=${fmt(beta)}°</text>
+            `;
+        }
+
+        function buildPitProcedure(act, a, b, c, alpha, beta) {
+            let html = '';
+            
+            // Si el estudiante ingresó un ángulo como dato principal
+            if(act.includes('alpha') || act.includes('beta')) {
+                let dado = act.includes('alpha') ? '\\alpha' : '\\beta';
+                let calc = act.includes('alpha') ? '\\beta' : '\\alpha';
+                let vDado = act.includes('alpha') ? alpha : beta;
+                let vCalc = act.includes('alpha') ? beta : alpha;
+                
+                html += `<div class="p-3 bg-slate-50 border border-slate-200 rounded mb-2"><strong>1. Ángulo Complementario:</strong> Al conocer un ángulo agudo, el otro se calcula restando a $90^\\circ$ (ya que en un triángulo rectángulo, los otros dos ángulos suman $90^\\circ$).<br>
+                $$ ${calc} = 90^\\circ - ${dado} = 90^\\circ - ${fmt(vDado)}^\\circ = ${fmt(vCalc)}^\\circ $$</div>`;
+                
+                html += `<div class="p-3 bg-blue-50 border border-blue-200 rounded mb-2"><strong>2. Comprobación con el Teorema de Pitágoras:</strong> Al cambiar el ángulo, las longitudes se reajustan. Podemos comprobar que el triángulo sigue cumpliendo perfectamente la ecuación pitagórica $c^2 = a^2 + b^2$ con los nuevos lados obtenidos: <br>
+                $$ \\text{Hipotenusa: } c = \\sqrt{(${fmt(a)})^2 + (${fmt(b)})^2} = \\sqrt{${fmt(a*a)} + ${fmt(b*b)}} = ${fmt(c)}\\text{ u} $$
+                $$ \\text{Cateto a: } a = \\sqrt{(${fmt(c)})^2 - (${fmt(b)})^2} = \\sqrt{${fmt(c*c)} - ${fmt(b*b)}} = ${fmt(a)}\\text{ u} $$
+                $$ \\text{Cateto b: } b = \\sqrt{(${fmt(c)})^2 - (${fmt(a)})^2} = \\sqrt{${fmt(c*c)} - ${fmt(a*a)}} = ${fmt(b)}\\text{ u} $$</div>`;
+            } 
+            // Si el estudiante ingresó únicamente lados
+            else {
+                if(act.includes('a') && act.includes('b')) {
+                    html += `<div class="p-3 bg-slate-50 border border-slate-200 rounded mb-2"><strong>1. Cálculo Hipotenusa ($c$):</strong> Utilizando Pitágoras, sumamos los cuadrados de los catetos.<br>
+                    $$ c = \\sqrt{(${fmt(a)})^2 + (${fmt(b)})^2} = \\sqrt{${fmt(a*a)} + ${fmt(b*b)}} = ${fmt(c)}\\text{ u} $$</div>`;
+                } else if(act.includes('c') && act.includes('a')) {
+                    html += `<div class="p-3 bg-slate-50 border border-slate-200 rounded mb-2"><strong>1. Cálculo Cateto ($b$):</strong> Utilizando Pitágoras, restamos el cuadrado del cateto conocido a la hipotenusa.<br>
+                    $$ b = \\sqrt{(${fmt(c)})^2 - (${fmt(a)})^2} = \\sqrt{${fmt(c*c)} - ${fmt(a*a)}} = ${fmt(b)}\\text{ u} $$</div>`;
+                } else if(act.includes('c') && act.includes('b')) {
+                    html += `<div class="p-3 bg-slate-50 border border-slate-200 rounded mb-2"><strong>1. Cálculo Cateto ($a$):</strong> Utilizando Pitágoras, restamos el cuadrado del cateto conocido a la hipotenusa.<br>
+                    $$ a = \\sqrt{(${fmt(c)})^2 - (${fmt(b)})^2} = \\sqrt{${fmt(c*c)} - ${fmt(b*b)}} = ${fmt(a)}\\text{ u} $$</div>`;
+                }
+                
+                // Explicación de los ángulos que cambian en consecuencia
+                html += `<div class="p-3 bg-white border border-slate-200 rounded mb-2"><strong>2. Ángulos Complementarios:</strong> Al generarse el nuevo triángulo, los ángulos cambian. Si identificamos uno de los ángulos agudos, el otro siempre se calcula restándolo de $90^\\circ$. Por ejemplo, asumiendo el nuevo $\\alpha = ${fmt(alpha)}^\\circ$:<br>
+                $$ \\beta = 90^\\circ - \\alpha = 90^\\circ - ${fmt(alpha)}^\\circ = ${fmt(beta)}^\\circ $$</div>`;
+            }
+            
+            document.getElementById('pit-procedure').innerHTML = html;
+            renderDynamicMath('pit-procedure');
+        }
+
+        // --- INICIALIZACIÓN ---
+        window.onload = function() {
+            setTimeout(() => {
+                // Renderizar KaTeX en todo el documento al iniciar
+                if (window.renderMathInElement) {
+                    renderMathInElement(document.body, {
+                        delimiters: [
+                            {left: '$$', right: '$$', display: true},
+                            {left: '\\[', right: '\\]', display: true},
+                            {left: '$', right: '$', display: false}, // <--- AÑADIDO: Configuración crítica para inline math
+                            {left: '\\(', right: '\\)', display: false}
+                        ],
+                        throwOnError: false
+                    });
+                }
+                setupRegulares();
+                setupPitagoras();
+                updateRegular(); 
+            }, 500);
+        };
+    </script>
+
+</body>
+</html>
